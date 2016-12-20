@@ -2,34 +2,34 @@
 
 import bluetooth
 import time
+import memcache
+import json
+from config import peeps
+
+mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 
 print "In/Out Board"
 
 while True:
     print "Checking " + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime())
+    
+    presencearray = []
+    for peep, mac in peeps.items():
+        result = bluetooth.lookup_name(mac, timeout=5)
+        if (result != None):
+            print peep + ": detected"
+            try:
+                mc.set(peep, "present", time=60)
+            except:
+                print "Write failed for " + peep
 
-    nearby_devices = bluetooth.discover_devices(lookup_names=True)
-    print("found %d bluetooth devices" % len(nearby_devices))
+        try:
+            presence = mc.get(peep)
+            print peep + " " + presence + " in memcached"
+            presencearray.append(peep)
 
-    for addr, name in nearby_devices:
-        print("  %s - %s" % (addr, name))
+        except:
+            print "Get failed for " + peep
 
-    service = DiscoveryService()
-    devices = service.discover(2)
-
-    for address, name in devices.items():
-            print("BLE name: {}, address: {}".format(name, address))
-
-    result = bluetooth.lookup_name('1C:66:AA:CF:DD:35', timeout=5)
-    if (result != None):
-        print "John: in"
-    else:
-        print "John: out"
-
-    result = bluetooth.lookup_name('00:1D:D9:F9:79:43', timeout=5)
-    if (result != None):
-        print "Paul: in"
-    else:
-        print "Paul: out"
-
-    time.sleep(60)
+    with open('presence.json', 'w') as output:
+        json.dump({"results": presencearray}, output)
