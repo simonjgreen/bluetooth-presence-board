@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>In / Out Board</title>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <style>
+        .dummy {
+            margin-top: 100%;
+        }
+        .person {
+            position: absolute;
+            top: 15px;
+            bottom: 0;
+            left: 15px;
+            right: 0;
+            text-align: center;
+            padding-top: calc(50% - 55px);
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row" id="people">
+        </div>
+    </div>
+     
+    <script>
+        function hashCode(str) { // java String#hashCode
+            var hash = 0;
+            for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return hash;
+        } 
+
+        function intToRGB(i){
+            var c = (i & 0x00FFFFFF)
+                .toString(16)
+                .toUpperCase();
+
+            return "00000".substring(0, 6 - c.length) + c;
+        }
+
+        (function update() {
+            var peopleAPI = "http://172.20.1.203/presence.json";
+            window.setInterval(function() {
+                $.getJSON( peopleAPI )
+                    .done(function( data ) {
+                        $( "#people").empty();
+                        $.each( data.results, function( i, item ) {
+                            //$( "<li>" ).text( item ).appendTo( "#people" );
+                            $("div#people").append('<div class="col-md-3 col-sm-4 col-xs-6"><div class="dummy" /><div class="person" style="background-color: #'+intToRGB(hashCode(item))+'">'+item+'</div></div>');
+                        });
+                    });
+            }, 500);
+        })();
+    </script>
+     
+</body>
+</html>

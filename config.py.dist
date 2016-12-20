@@ -1,0 +1,6 @@
+#Insert your addresses below. Discover using `hcitool scan` with device in discoverable mode
+peeps = {
+        'Dave': 'C0:FF:FB:DD:0E:11', #OnePlus X
+        'Simon': 'D9:AA:BB:CC:92:C4', #Galaxy S7
+        }
+
