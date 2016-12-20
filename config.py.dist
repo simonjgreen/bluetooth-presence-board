@@ -4,3 +4,5 @@ peeps = {
         'Simon': 'D9:AA:BB:CC:92:C4', #Galaxy S7
         }
 
+#TIme to hold in memcached before dropping
+ttl = 360

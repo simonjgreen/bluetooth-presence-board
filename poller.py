@@ -4,7 +4,9 @@ import bluetooth
 import time
 import memcache
 import json
+
 from config import peeps
+from config import ttl
 
 mc = memcache.Client(['127.0.0.1:11211'], debug=0)
 
@@ -19,7 +21,7 @@ while True:
         if (result != None):
             print peep + ": detected"
             try:
-                mc.set(peep, "present", time=60)
+                mc.set(peep, "present", time=ttl)
             except:
                 print "Write failed for " + peep
 
